@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ritik — Learning markets, writing the thoughts that emerge in between.   </title>
+<title>Ritik — Learning markets, writing the thoughts that emerge in between.</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -16,7 +16,6 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -27,7 +26,6 @@
     line-height: 1.6;
   }
 
-  /* NAV */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     background: rgba(249, 246, 241, 0.92);
@@ -44,9 +42,10 @@
     color: var(--ink);
     text-decoration: none;
     letter-spacing: -0.02em;
+    cursor: pointer;
   }
 
-  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
 
   .nav-links a {
     text-decoration: none;
@@ -61,7 +60,22 @@
 
   .nav-links a:hover, .nav-links a.active { color: var(--ink); }
 
-  /* PAGES */
+  .admin-badge {
+    display: none;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: white;
+    padding: 3px 10px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    border: none;
+    transition: opacity 0.2s;
+  }
+  .admin-badge:hover { opacity: 0.8; }
+
   .page { display: none; padding-top: 60px; min-height: 100vh; animation: fadeUp 0.4s ease; }
   .page.active { display: block; }
 
@@ -70,254 +84,189 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* HERO */
-  .hero {
-    padding: 100px 5vw 80px;
-    max-width: 900px;
+  .loading-bar {
+    position: fixed; top: 60px; left: 0; right: 0;
+    height: 2px; background: var(--accent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s ease; z-index: 200;
+  }
+  .loading-bar.active { transform: scaleX(1); }
+
+  .saving-toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--ink); color: var(--cream);
+    font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 10px 20px; font-family: 'DM Sans', sans-serif;
+    opacity: 0; transition: opacity 0.3s; z-index: 300; pointer-events: none;
+  }
+  .saving-toast.show { opacity: 1; }
+
+  /* SHARE BUTTONS */
+  .share-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
   }
 
-  .hero-eyebrow {
-    font-size: 0.75rem;
-    letter-spacing: 0.14em;
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--accent);
     font-weight: 500;
-    margin-bottom: 24px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+
+  .share-btn:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .share-btn.copied { background: #2e7d32; color: white; border-color: #2e7d32; }
+
+  /* Share row inside post detail — slightly larger */
+  .post-detail .share-row {
+    margin-top: 40px;
+    padding-top: 28px;
+  }
+
+  .post-detail .share-row .share-btn {
+    font-size: 0.72rem;
+    padding: 7px 16px;
+  }
+
+  .share-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+    align-self: center;
+    margin-right: 4px;
+  }
+
+  .hero { padding: 100px 5vw 80px; max-width: 900px; }
+
+  .hero-eyebrow {
+    font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500; margin-bottom: 24px;
   }
 
   .hero h1 {
     font-family: 'Playfair Display', serif;
     font-size: clamp(2.8rem, 6vw, 5rem);
-    font-weight: 400;
-    line-height: 1.08;
-    letter-spacing: -0.03em;
-    margin-bottom: 28px;
+    font-weight: 400; line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 28px;
   }
 
   .hero h1 em { font-style: italic; color: var(--accent); }
 
   .hero-desc {
-    font-size: 1.1rem;
-    color: var(--muted);
-    max-width: 500px;
-    line-height: 1.75;
-    margin-bottom: 44px;
-    font-weight: 300;
+    font-size: 1.1rem; color: var(--muted); max-width: 500px;
+    line-height: 1.75; margin-bottom: 44px; font-weight: 300;
   }
 
   .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
 
   .btn-primary {
-    background: var(--ink);
-    color: var(--cream);
-    padding: 12px 28px;
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.875rem;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
-    text-decoration: none;
+    background: var(--ink); color: var(--cream); padding: 12px 28px; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500;
+    letter-spacing: 0.03em; cursor: pointer; transition: background 0.2s, transform 0.15s;
     display: inline-block;
   }
-
   .btn-primary:hover { background: var(--accent); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
   .btn-secondary {
-    background: transparent;
-    color: var(--ink);
-    padding: 12px 28px;
-    border: 1px solid var(--border);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.875rem;
-    font-weight: 400;
-    letter-spacing: 0.03em;
-    cursor: pointer;
+    background: transparent; color: var(--ink); padding: 12px 28px;
+    border: 1px solid var(--border); font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; font-weight: 400; letter-spacing: 0.03em; cursor: pointer;
     transition: border-color 0.2s, color 0.2s;
   }
-
   .btn-secondary:hover { border-color: var(--ink); }
 
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 0 5vw;
-  }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0 5vw; }
 
-  /* ABOUT */
   .about-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    padding: 80px 5vw;
-    max-width: 1100px;
-    margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    padding: 80px 5vw; max-width: 1100px; margin: 0 auto;
   }
 
   .section-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
-    margin-bottom: 20px;
+    font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500; margin-bottom: 20px;
   }
 
   .about-left h2 {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 3.5vw, 2.8rem);
-    font-weight: 400;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    margin-bottom: 28px;
+    font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 400;
+    line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 28px;
   }
 
-  .about-left p {
-    color: var(--muted);
-    line-height: 1.85;
-    font-weight: 300;
-    font-size: 0.975rem;
-    margin-bottom: 16px;
-  }
+  .about-left p { color: var(--muted); line-height: 1.85; font-weight: 300; font-size: 0.975rem; margin-bottom: 16px; }
 
   .about-right { padding-top: 52px; }
 
   .skill-item {
-    padding: 20px 0;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 18px 0; border-bottom: 1px solid var(--border);
+    display: grid; grid-template-columns: 1fr auto; column-gap: 16px; align-items: start;
   }
-
   .skill-item:first-child { border-top: 1px solid var(--border); }
 
-  .skill-name { font-weight: 500; font-size: 0.9rem; }
   .skill-tag {
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
+    font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500; white-space: nowrap;
+    padding-top: 2px; grid-column: 2; grid-row: 1;
   }
 
-  /* PROJECTS */
-  .section-header {
-    padding: 80px 5vw 40px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
+  .skill-name { font-weight: 400; font-size: 0.875rem; color: var(--muted); line-height: 1.6; grid-column: 1; grid-row: 1; }
 
-  .section-header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 3.5vw, 2.8rem);
-    font-weight: 400;
-    letter-spacing: -0.02em;
-  }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    margin: 0 5vw 80px;
-    border: 1px solid var(--border);
-  }
-
-  .project-card {
-    background: var(--card);
-    padding: 40px;
-    transition: background 0.2s;
-    cursor: pointer;
-  }
-
-  .project-card:hover { background: #FFFDF9; }
-
-  .project-num {
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 28px;
-  }
-
-  .project-card h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.35rem;
-    font-weight: 400;
-    margin-bottom: 12px;
-    letter-spacing: -0.01em;
-  }
-
-  .project-card p {
-    font-size: 0.875rem;
-    color: var(--muted);
-    line-height: 1.7;
-    font-weight: 300;
-    margin-bottom: 24px;
-  }
-
-  .project-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-
-  .tag {
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
-
-  /* BLOG */
   .blog-layout {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 60px;
-    padding: 40px 5vw 80px;
-    max-width: 1100px;
-    margin: 0 auto;
-    align-items: start;
+    display: grid; grid-template-columns: 1fr 320px; gap: 60px;
+    padding: 40px 5vw 80px; max-width: 1100px; margin: 0 auto; align-items: start;
   }
 
-  /* NEW POST FORM */
-  .new-post-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    padding: 32px;
-    margin-bottom: 40px;
-  }
+  .blog-header { padding: 80px 5vw 0; max-width: 1100px; margin: 0 auto; }
 
-  .new-post-card h3 {
+  .blog-header h2 {
     font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 400;
-    margin-bottom: 20px;
+    font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 400; letter-spacing: -0.02em;
+  }
+
+  .new-post-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-top: 3px solid var(--accent); padding: 32px; margin-bottom: 40px; display: none;
+  }
+  .new-post-card.admin-visible { display: block; }
+
+  .new-post-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 400; margin-bottom: 4px; }
+
+  .admin-label {
+    font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500; margin-bottom: 20px; display: block;
   }
 
   .form-group { margin-bottom: 16px; }
 
   .form-group label {
-    display: block;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
+    display: block; font-size: 0.7rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
   }
 
   .form-group input,
   .form-group textarea,
   .form-group select {
-    width: 100%;
-    border: 1px solid var(--border);
-    background: var(--cream);
-    padding: 10px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    color: var(--ink);
-    outline: none;
-    transition: border-color 0.2s;
-    resize: vertical;
+    width: 100%; border: 1px solid var(--border); background: var(--cream);
+    padding: 10px 14px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    color: var(--ink); outline: none; transition: border-color 0.2s; resize: vertical;
   }
 
   .form-group input:focus,
@@ -326,203 +275,194 @@
 
   .form-group textarea { min-height: 120px; }
 
-  /* POSTS LIST */
-  .post-item {
-    border-bottom: 1px solid var(--border);
-    padding: 32px 0;
-    cursor: pointer;
-    transition: padding-left 0.2s;
-  }
+  .img-url-preview { position: relative; margin-top: 10px; display: none; }
+  .img-url-preview img { width: 100%; max-height: 200px; object-fit: cover; border: 1px solid var(--border); display: block; }
+  .img-url-hint { font-size: 0.72rem; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+  .img-url-hint a { color: var(--accent); text-decoration: none; font-weight: 500; }
+  .img-url-hint a:hover { text-decoration: underline; }
+  .img-error { font-size: 0.72rem; color: var(--accent); margin-top: 6px; display: none; }
 
+  .post-item {
+    border-bottom: 1px solid var(--border); padding: 32px 0;
+    cursor: pointer; transition: padding-left 0.2s; position: relative;
+  }
   .post-item:hover { padding-left: 8px; }
 
-  .post-meta {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    margin-bottom: 12px;
+  .delete-post-btn {
+    display: none; position: absolute; top: 32px; right: 0;
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 4px 10px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s, color 0.2s; z-index: 2;
   }
+  .delete-post-btn:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  body.admin-mode .delete-post-btn { display: inline-block; }
 
-  .post-date {
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
+  .post-meta { display: flex; gap: 16px; align-items: center; margin-bottom: 12px; }
+  .post-date { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .post-category { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
 
-  .post-category {
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
+  .post-thumb {
+    width: 100%; max-height: 200px; object-fit: cover;
+    margin-bottom: 16px; display: block; border: 1px solid var(--border);
   }
 
   .post-item h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-weight: 400;
-    letter-spacing: -0.01em;
-    margin-bottom: 10px;
-    line-height: 1.3;
+    font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 400;
+    letter-spacing: -0.01em; margin-bottom: 10px; line-height: 1.3;
   }
 
-  .post-item p {
-    font-size: 0.875rem;
-    color: var(--muted);
-    line-height: 1.7;
-    font-weight: 300;
-  }
+  .post-item p { font-size: 0.875rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
 
   .post-read-more {
-    display: inline-block;
-    margin-top: 14px;
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
+    display: inline-block; margin-top: 14px; font-size: 0.75rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 500;
   }
 
-  /* SIDEBAR */
-  .sidebar-widget {
-    background: var(--card);
-    border: 1px solid var(--border);
-    padding: 28px;
-    margin-bottom: 24px;
-  }
-
-  .sidebar-widget h4 {
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 16px;
-  }
+  .sidebar-widget { background: var(--card); border: 1px solid var(--border); padding: 28px; margin-bottom: 24px; }
+  .sidebar-widget h4 { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
 
   .sidebar-category {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: color 0.2s;
+    display: flex; justify-content: space-between; padding: 8px 0;
+    border-bottom: 1px solid var(--border); font-size: 0.875rem; cursor: pointer; transition: color 0.2s;
   }
-
   .sidebar-category:hover { color: var(--accent); }
   .sidebar-category:last-child { border-bottom: none; }
+  .sidebar-count { font-size: 0.75rem; color: var(--muted); }
 
-  .sidebar-count {
-    font-size: 0.75rem;
-    color: var(--muted);
-  }
-
-  /* POST DETAIL VIEW */
   .post-detail { display: none; }
   .post-detail.show { display: block; }
   .posts-list.hide { display: none; }
-
-  .post-detail-content {
-    max-width: 680px;
-  }
+  .post-detail-content { max-width: 680px; }
 
   .back-btn {
-    background: none;
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    cursor: pointer;
-    padding: 0;
-    margin-bottom: 40px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: color 0.2s;
+    background: none; border: none; font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); cursor: pointer; padding: 0; margin-bottom: 40px;
+    display: flex; align-items: center; gap: 8px; transition: color 0.2s;
   }
-
   .back-btn:hover { color: var(--ink); }
 
   .post-detail-title {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(1.8rem, 3vw, 2.4rem);
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    margin-bottom: 20px;
+    font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 400;
+    letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 20px;
   }
 
-  .post-detail-meta {
-    display: flex; gap: 20px; margin-bottom: 40px;
-    padding-bottom: 28px;
-    border-bottom: 1px solid var(--border);
+  .post-detail-meta { display: flex; gap: 20px; margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+
+  .post-detail-img {
+    width: 100%; max-height: 360px; object-fit: cover;
+    margin-bottom: 32px; border: 1px solid var(--border); display: none;
   }
 
-  .post-detail-body {
-    font-size: 1rem;
-    line-height: 1.85;
-    font-weight: 300;
-    color: #3A3530;
-    white-space: pre-wrap;
-  }
+  .post-detail-body { font-size: 1rem; line-height: 1.85; font-weight: 300; color: #3A3530; white-space: pre-wrap; }
 
-  /* EMPTY STATE */
-  .empty-state {
-    padding: 60px 0;
-    text-align: center;
-    color: var(--muted);
-  }
-
+  .empty-state { padding: 60px 0; text-align: center; color: var(--muted); }
   .empty-state p { font-size: 0.9rem; font-style: italic; }
 
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 32px 5vw;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
+  .skeleton { background: var(--border); border-radius: 2px; animation: pulse 1.4s ease infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
+  footer {
+    border-top: 1px solid var(--border); padding: 32px 5vw;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.8rem; color: var(--muted);
+  }
   footer a { color: var(--muted); text-decoration: none; }
   footer a:hover { color: var(--accent); }
+
+  .admin-trigger {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--border);
+    cursor: pointer; transition: background 0.3s; flex-shrink: 0;
+  }
+  .admin-trigger:hover { background: var(--muted); }
+  body.admin-mode .admin-trigger { background: var(--accent); }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(26, 23, 20, 0.55); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--card); border: 1px solid var(--border);
+    padding: 48px 40px; width: 100%; max-width: 400px; animation: fadeUp 0.25s ease;
+  }
+
+  .modal h3 {
+    font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 400;
+    margin-bottom: 8px; letter-spacing: -0.02em;
+  }
+  .modal p { font-size: 0.85rem; color: var(--muted); margin-bottom: 28px; font-weight: 300; }
+
+  .modal-input {
+    width: 100%; border: 1px solid var(--border); background: var(--cream);
+    padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    color: var(--ink); outline: none; transition: border-color 0.2s;
+    margin-bottom: 12px; letter-spacing: 0.06em;
+  }
+  .modal-input:focus { border-color: var(--ink); }
+  .modal-error { font-size: 0.78rem; color: var(--accent); margin-bottom: 16px; display: none; }
+
+  .modal-actions { display: flex; gap: 12px; }
+
+  .modal-cancel {
+    background: transparent; color: var(--muted); padding: 10px 20px;
+    border: 1px solid var(--border); font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; cursor: pointer; transition: border-color 0.2s, color 0.2s; flex: 1;
+  }
+  .modal-cancel:hover { border-color: var(--ink); color: var(--ink); }
 
   @media (max-width: 768px) {
     .about-layout { grid-template-columns: 1fr; gap: 40px; }
     .blog-layout { grid-template-columns: 1fr; }
     .sidebar { order: -1; }
-    .projects-grid { grid-template-columns: 1fr; }
+    .modal { padding: 32px 24px; margin: 0 16px; }
+    .share-row { gap: 6px; }
   }
 </style>
 </head>
 <body>
 
+<div class="loading-bar" id="loading-bar"></div>
+<div class="saving-toast" id="saving-toast">Saving...</div>
+
+<!-- ADMIN LOGIN MODAL -->
+<div class="modal-overlay" id="admin-modal">
+  <div class="modal">
+    <h3>Admin Access</h3>
+    <p>Enter your password to enable writing mode.</p>
+    <input class="modal-input" type="password" id="admin-password-input" placeholder="Password"
+      onkeydown="if(event.key==='Enter') attemptLogin()">
+    <div class="modal-error" id="modal-error">Incorrect password. Try again.</div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn-primary" style="flex:1" onclick="attemptLogin()">Enter</button>
+    </div>
+  </div>
+</div>
+
 <nav>
-  <a class="nav-logo" onclick="showPage('home')" style="cursor:pointer">Ritik.</a>
+  <span class="nav-logo" onclick="showPage('home')">Ritik.</span>
   <ul class="nav-links">
     <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
     <li><a onclick="showPage('about')" id="nav-about">About</a></li>
-    <li><a onclick="showPage('projects')" id="nav-projects">Work</a></li>
     <li><a onclick="showPage('blog')" id="nav-blog">Blog</a></li>
+    <li><button class="admin-badge" id="admin-badge" onclick="logoutAdmin()">Admin ✕</button></li>
   </ul>
 </nav>
 
 <!-- HOME -->
 <div class="page active" id="page-home">
   <div class="hero">
-    <p class="hero-eyebrow">Marketing & Finanace · MBA</p>
-    <h1>Notes From My<em>Journey</em></h1>
-    <p class="hero-desc">I am Ritik — a student of markets and a learner of the world around me.
-      While my academic path explores marketing and finance, curiosity often travels further—through places, conversations, and physical challenges.
-      This space shares thoughts gathered between learning, movement, and reflection.</p>
+    <p class="hero-eyebrow">Marketing & Finance · MBA</p>
+    <h1>Notes From My<br><em>Journey</em></h1>
+    <p class="hero-desc">I am Ritik — a student of markets and a learner of the world around me. While my academic path explores marketing and finance, curiosity often travels further—through places, conversations, and physical challenges. This space shares thoughts gathered between learning, movement, and reflection.</p>
     <div class="hero-actions">
       <button class="btn-primary" onclick="showPage('blog')">Read My Blog</button>
-      <button class="btn-secondary" onclick="showPage('projects')">View Work</button>
+      <button class="btn-secondary" onclick="showPage('about')">About Me</button>
     </div>
   </div>
   <hr class="divider">
@@ -537,99 +477,48 @@
   <div class="about-layout">
     <div class="about-left">
       <p class="section-label">About Me</p>
-      <h2>Strategy meets<br>storytelling.</h2>
-      <p>I'm an MBA student with a dual specialization in Marketing and Finance — fascinated by how brands earn trust, build communities, and translate purpose into profit.</p>
-      <p>My work spans consumer insights, brand strategy, campaign research, and financial analysis of marketing ROI. I write daily to sharpen my thinking and share what I'm learning.</p>
-      <p>Based in Dehradun, studying the way markets and minds work together.</p>
+      <h2>A student of<br>Markets and Life.</h2>
+      <p>I am Ritik, currently pursuing an MBA in Marketing and Finance, though the journey is less about degrees and more about learning how the world moves. Markets, consumer behavior, and business decisions are not just academic subjects—they are reflections of human choices, incentives, and patterns that quietly shape everyday life. Understanding them feels less like studying a discipline and more like observing a living system.</p>
+      <p>Learning, however, rarely stays within classrooms. Much of it unfolds while traveling to unfamiliar places, in conversations with different people, or through the discipline of physical activity. These experiences reveal perspectives that no textbook can fully capture, slowly shaping how challenges, opportunities, and ideas are understood.</p>
+      <p>This space gathers reflections from that ongoing journey—notes on markets, observations about people, and thoughts that emerge somewhere between movement, curiosity, and quiet reflection.</p>
       <div style="margin-top: 32px;">
         <button class="btn-primary" onclick="showPage('blog')">Read My Writing</button>
       </div>
     </div>
     <div class="about-right">
-      <p class="section-label">Expertise</p>
+      <p class="section-label">Area of Interest</p>
       <div class="skill-item">
-        <span class="skill-name">Brand Strategy</span>
-        <span class="skill-tag">Core</span>
+        <span class="skill-name">Consumer Insights, Market Observations, Behaviour Patterns</span>
+        <span class="skill-tag">Market &amp; Consumer Behaviour</span>
       </div>
       <div class="skill-item">
-        <span class="skill-name">Consumer Insights</span>
+        <span class="skill-name">Survey Design, Data Analysis, Excel Basics</span>
         <span class="skill-tag">Research</span>
       </div>
       <div class="skill-item">
-        <span class="skill-name">Marketing Analytics</span>
+        <span class="skill-name">Financial Fundamentals</span>
         <span class="skill-tag">Finance</span>
       </div>
       <div class="skill-item">
-        <span class="skill-name">Campaign Planning</span>
-        <span class="skill-tag">Strategy</span>
+        <span class="skill-name">Travel, Physical Activities, Observations</span>
+        <span class="skill-tag">Experience</span>
       </div>
-      <div class="skill-item">
-        <span class="skill-name">Content & Storytelling</span>
-        <span class="skill-tag">Creative</span>
-      </div>
-      <div class="skill-item">
-        <span class="skill-name">Market Research</span>
-        <span class="skill-tag">Academic</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PROJECTS -->
-<div class="page" id="page-projects">
-  <div class="section-header">
-    <p class="section-label">Selected Work</p>
-    <h2>Projects & Research</h2>
-  </div>
-  <div class="projects-grid">
-    <div class="project-card">
-      <p class="project-num">001</p>
-      <h3>Over-Tourism in Hilly Destinations</h3>
-      <p>A ~100-page research paper examining the impact of over-tourism on hill stations like Manali and Shimla — analyzing brand identity, sustainability, and destination marketing strategy.</p>
-      <div class="project-tags">
-        <span class="tag">Research</span>
-        <span class="tag">Destination Marketing</span>
-        <span class="tag">Sustainability</span>
-      </div>
-    </div>
-    <div class="project-card">
-      <p class="project-num">002</p>
-      <h3>Discriminant Analysis in Brand Segmentation</h3>
-      <p>Applied discriminant analysis to understand how consumers differentiate between competing brands — bridging quantitative methods with marketing strategy.</p>
-      <div class="project-tags">
-        <span class="tag">Analytics</span>
-        <span class="tag">Branding</span>
-        <span class="tag">Quantitative</span>
-      </div>
-    </div>
-    <div class="project-card">
-      <p class="project-num">003</p>
-      <h3>Nature of Management — Academic Notes</h3>
-      <p>Deep-dive notes and frameworks on management theory, covering classical, behavioral, and systems approaches as applied to modern marketing organizations.</p>
-      <div class="project-tags">
-        <span class="tag">Management</span>
-        <span class="tag">Theory</span>
-        <span class="tag">MBA</span>
-      </div>
-    </div>
-    <div class="project-card" style="border: 2px dashed var(--border); background: transparent; display: flex; align-items: center; justify-content: center; min-height: 220px; flex-direction: column; gap: 12px; color: var(--muted);">
-      <span style="font-size: 1.5rem;">+</span>
-      <span style="font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;">More coming soon</span>
     </div>
   </div>
 </div>
 
 <!-- BLOG -->
 <div class="page" id="page-blog">
-  <div class="section-header" style="padding-bottom: 0;">
+  <div class="blog-header">
     <p class="section-label">Daily Thoughts</p>
     <h2>The Blog</h2>
   </div>
   <div class="blog-layout">
     <div class="blog-main">
-      <!-- New Post Form -->
-      <div class="new-post-card">
+
+      <div class="new-post-card" id="write-card">
         <h3>Write a new post</h3>
+        <span class="admin-label">Admin Mode</span>
         <div class="form-group">
           <label>Post Title</label>
           <input type="text" id="post-title" placeholder="What's on your mind today?">
@@ -637,19 +526,28 @@
         <div class="form-group">
           <label>Category</label>
           <select id="post-category">
-            <option value="Marketing">Marketing</option>
-            <option value="Branding">Branding</option>
-            <option value="Finance">Finance</option>
-            <option value="Strategy">Strategy</option>
-            <option value="Life & Learning">Life & Learning</option>
-            <option value="Books & Ideas">Books & Ideas</option>
+            <option value="Markets & Business">Markets &amp; Business</option>
+            <option value="Observations">Observations</option>
+            <option value="Learning & Growth">Learning &amp; Growth</option>
+            <option value="Travel & Experiences">Travel &amp; Experiences</option>
+            <option value="Short Reflections">Short Reflections</option>
+            <option value="Books & Ideas">Books &amp; Ideas</option>
           </select>
+        </div>
+        <div class="form-group">
+          <label>Cover Image URL (optional)</label>
+          <input type="url" id="post-image-url" placeholder="Paste image URL e.g. https://i.imgur.com/abc123.jpg" oninput="previewImageUrl()">
+          <div class="img-url-hint">Upload to <a href="https://imgur.com/upload" target="_blank">imgur.com</a>, then right-click the image → <em>Copy image address</em> and paste above.</div>
+          <div class="img-error" id="img-error">⚠ Could not load image — please check the URL.</div>
+          <div class="img-url-preview" id="img-url-preview">
+            <img id="img-url-preview-img" src="" alt="Preview" onerror="handleImgError()" onload="handleImgLoad()">
+          </div>
         </div>
         <div class="form-group">
           <label>Content</label>
           <textarea id="post-content" placeholder="Write your thoughts here..."></textarea>
         </div>
-        <button class="btn-primary" onclick="publishPost()">Publish Post</button>
+        <button class="btn-primary" id="publish-btn" onclick="publishPost()">Publish Post</button>
       </div>
 
       <!-- Post Detail View -->
@@ -661,17 +559,48 @@
             <span class="post-category" id="detail-category"></span>
           </div>
           <h2 class="post-detail-title" id="detail-title"></h2>
+          <img class="post-detail-img" id="detail-img" src="" alt="">
           <p class="post-detail-body" id="detail-body"></p>
+          <!-- Share row inside post detail -->
+          <div class="share-row" id="detail-share-row">
+            <span class="share-label">Share</span>
+            <button class="share-btn" id="detail-whatsapp" onclick="sharePost('whatsapp')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.932 1.395 5.608L0 24l6.562-1.367A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.371l-.36-.214-3.724.776.79-3.624-.234-.373A9.789 9.789 0 012.182 12C2.182 6.579 6.579 2.182 12 2.182S21.818 6.579 21.818 12 17.421 21.818 12 21.818z"/></svg>
+              WhatsApp
+            </button>
+            <button class="share-btn" id="detail-twitter" onclick="sharePost('twitter')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Twitter / X
+            </button>
+            <button class="share-btn" id="detail-linkedin" onclick="sharePost('linkedin')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </button>
+            <button class="share-btn" id="detail-copy" onclick="sharePost('copy')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copy Link
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Posts List -->
       <div class="posts-list" id="posts-list">
-        <div id="blog-posts-container"></div>
+        <div id="blog-posts-container">
+          <div style="padding:32px 0; border-bottom:1px solid var(--border)">
+            <div class="skeleton" style="height:12px;width:120px;margin-bottom:16px"></div>
+            <div class="skeleton" style="height:20px;width:80%;margin-bottom:10px"></div>
+            <div class="skeleton" style="height:12px;width:60%"></div>
+          </div>
+          <div style="padding:32px 0;">
+            <div class="skeleton" style="height:12px;width:100px;margin-bottom:16px"></div>
+            <div class="skeleton" style="height:20px;width:70%;margin-bottom:10px"></div>
+            <div class="skeleton" style="height:12px;width:50%"></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Sidebar -->
     <div class="sidebar">
       <div class="sidebar-widget">
         <h4>Categories</h4>
@@ -679,7 +608,7 @@
       </div>
       <div class="sidebar-widget">
         <h4>About This Blog</h4>
-        <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.7; font-weight: 300;">Daily notes on marketing, branding, strategy, and everything in between. Thinking out loud as I navigate my MBA and the world of brands.</p>
+        <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.7; font-weight: 300;">Notes on markets, people, and the world in between. Thinking out loud as I learn, travel, and grow.</p>
       </div>
     </div>
   </div>
@@ -687,43 +616,205 @@
 
 <footer>
   <span>© 2026 Ritik</span>
-  <div style="display:flex; gap: 24px;">
-    <a href="#">LinkedIn</a>
-    <a href="#">Twitter</a>
-    <a href="#">Email</a>
+  <div style="display:flex; gap: 24px; align-items: center;">
+    <a href="https://www.linkedin.com/in/ritik-thakur-34b198306" target="_blank">LinkedIn</a>
+    <a href="https://www.instagram.com/ritik_thakur_777?igsh=MWJ4MWUyMnVsd253dA==" target="_blank">Instagram</a>
+    <a href="mailto:ritik13thakur@gmail.com">Email</a>
+    <span class="admin-trigger" onclick="openAdminModal()"></span>
   </div>
 </footer>
 
 <script>
-  // --- STATE ---
-  let posts = JSON.parse(localStorage.getItem('ritik_blog_posts') || '[]');
+  // ── CONFIG ───────────────────────────────────────────────────────────
+  const ADMIN_PASSWORD = 'ritik2026'; // Change before going live!
+  const BIN_ID  = '69a8434143b1c97be9b2f619';
+  const API_KEY = '$2a$10$0afL1vjckBm3y.le0Hn9iu3dvAzHi9SxY81wuih0Lxn1bynB/JJA6';
+  const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+  const SITE_URL = window.location.origin + window.location.pathname;
+  // ────────────────────────────────────────────────────────────────────
 
-  // Seed with example posts if empty
-  if (posts.length === 0) {
-    posts = [
-      {
-        id: 1,
-        title: "Why every brand needs a 'why' before a 'what'",
-        category: "Branding",
-        date: "March 3, 2026",
-        content: "Simon Sinek said it first and best — but I keep coming back to it in every brand analysis I do.\n\nThe brands that outlast trends aren't the ones with the best products. They're the ones that knew why they existed before they decided what to sell.\n\nToday I was looking at Patagonia's brand evolution. It's a masterclass. They didn't pivot to purpose — purpose was always the center. The clothes were just evidence of the belief.\n\nWhat would it look like if every brand brief started with: 'What do we believe that most people don't?' That single question would kill half the bad brand strategies I've seen in case studies."
-      },
-      {
-        id: 2,
-        title: "The ROI problem with brand marketing",
-        category: "Finance",
-        date: "March 2, 2026",
-        content: "My finance brain and my marketing brain are always fighting.\n\nFinance asks: what's the return on this brand campaign?\nMarketing says: you can't put a number on trust.\nFinance says: then we won't fund it.\n\nThe truth is somewhere in the middle, and it's frustrating that we haven't solved it better as a discipline. Brand equity is real — it shows up in pricing power, retention, and share of voice. But attributing a 3-year brand investment to a quarterly earnings number is genuinely hard.\n\nI've been reading about Byron Sharp's work on mental availability. His framing helps: brand marketing isn't about changing minds, it's about being the first brand that comes to mind in a buying situation. That's measurable. That's financeable."
-      }
-    ];
-    savePosts();
+  let posts   = [];
+  let isAdmin = false;
+  let currentOpenPostId = null;
+
+  // ── JSONBIN ──────────────────────────────────────────────────────────
+  async function loadPosts() {
+    try {
+      const res  = await fetch(BIN_URL + '/latest', { headers: { 'X-Master-Key': API_KEY } });
+      const data = await res.json();
+      posts = data.record.posts || [];
+    } catch(e) { posts = []; }
   }
 
-  function savePosts() {
-    localStorage.setItem('ritik_blog_posts', JSON.stringify(posts));
+  async function savePosts() {
+    showToast('Saving...');
+    try {
+      await fetch(BIN_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+        body: JSON.stringify({ posts })
+      });
+      showToast('Saved ✓');
+    } catch(e) { showToast('Error saving!'); }
   }
 
-  // --- NAVIGATION ---
+  // ── SHARING ──────────────────────────────────────────────────────────
+  function getShareUrl(postId) {
+    return `${SITE_URL}#post-${postId}`;
+  }
+
+  function sharePost(platform) {
+    if (!currentOpenPostId) return;
+    const post = posts.find(p => p.id === currentOpenPostId);
+    if (!post) return;
+
+    const url   = getShareUrl(post.id);
+    const title = encodeURIComponent(post.title);
+    const text  = encodeURIComponent(`"${post.title}" — read on Ritik's blog`);
+
+    if (platform === 'whatsapp') {
+      window.open(`https://wa.me/?text=${text}%20${encodeURIComponent(url)}`, '_blank');
+    } else if (platform === 'twitter') {
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`, '_blank');
+    } else if (platform === 'linkedin') {
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+    } else if (platform === 'copy') {
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById('detail-copy');
+        btn.textContent = '✓ Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy Link`;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  }
+
+  function shareFromCard(platform, postId, e) {
+    e.stopPropagation(); // don't open the post when clicking share
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+
+    const url  = getShareUrl(post.id);
+    const text = encodeURIComponent(`"${post.title}" — read on Ritik's blog`);
+
+    if (platform === 'whatsapp') {
+      window.open(`https://wa.me/?text=${text}%20${encodeURIComponent(url)}`, '_blank');
+    } else if (platform === 'twitter') {
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`, '_blank');
+    } else if (platform === 'linkedin') {
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+    } else if (platform === 'copy') {
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById(`copy-${postId}`);
+        if (btn) {
+          btn.textContent = '✓ Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy Link`;
+            btn.classList.remove('copied');
+          }, 2000);
+        }
+      });
+    }
+  }
+
+  function shareButtonsHTML(postId) {
+    return `
+      <div class="share-row" onclick="event.stopPropagation()">
+        <span class="share-label">Share</span>
+        <button class="share-btn" onclick="shareFromCard('whatsapp',${postId},event)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.932 1.395 5.608L0 24l6.562-1.367A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.371l-.36-.214-3.724.776.79-3.624-.234-.373A9.789 9.789 0 012.182 12C2.182 6.579 6.579 2.182 12 2.182S21.818 6.579 21.818 12 17.421 21.818 12 21.818z"/></svg>
+          WhatsApp
+        </button>
+        <button class="share-btn" onclick="shareFromCard('twitter',${postId},event)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Twitter / X
+        </button>
+        <button class="share-btn" onclick="shareFromCard('linkedin',${postId},event)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </button>
+        <button class="share-btn" id="copy-${postId}" onclick="shareFromCard('copy',${postId},event)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy Link
+        </button>
+      </div>`;
+  }
+
+  // ── UI HELPERS ───────────────────────────────────────────────────────
+  function showLoading(on) { document.getElementById('loading-bar').classList.toggle('active', on); }
+
+  function showToast(msg) {
+    const t = document.getElementById('saving-toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._timeout);
+    t._timeout = setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  // ── IMAGE URL PREVIEW ────────────────────────────────────────────────
+  let previewTimer = null;
+
+  function previewImageUrl() {
+    const url = document.getElementById('post-image-url').value.trim();
+    const preview = document.getElementById('img-url-preview');
+    const previewImg = document.getElementById('img-url-preview-img');
+    document.getElementById('img-error').style.display = 'none';
+    if (!url) { preview.style.display = 'none'; previewImg.src = ''; return; }
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(() => { preview.style.display = 'block'; previewImg.src = url; }, 600);
+  }
+
+  function handleImgLoad() { document.getElementById('img-error').style.display = 'none'; }
+  function handleImgError() {
+    document.getElementById('img-url-preview').style.display = 'none';
+    document.getElementById('img-error').style.display = 'block';
+  }
+
+  // ── ADMIN AUTH ───────────────────────────────────────────────────────
+  function openAdminModal() {
+    if (isAdmin) { logoutAdmin(); return; }
+    document.getElementById('admin-password-input').value = '';
+    document.getElementById('modal-error').style.display = 'none';
+    document.getElementById('admin-modal').classList.add('show');
+    setTimeout(() => document.getElementById('admin-password-input').focus(), 100);
+  }
+
+  function closeAdminModal() { document.getElementById('admin-modal').classList.remove('show'); }
+
+  function attemptLogin() {
+    const input = document.getElementById('admin-password-input').value;
+    if (input === ADMIN_PASSWORD) {
+      isAdmin = true; closeAdminModal(); enableAdminMode();
+    } else {
+      document.getElementById('modal-error').style.display = 'block';
+      document.getElementById('admin-password-input').value = '';
+      document.getElementById('admin-password-input').focus();
+    }
+  }
+
+  function enableAdminMode() {
+    document.body.classList.add('admin-mode');
+    document.getElementById('write-card').classList.add('admin-visible');
+    document.getElementById('admin-badge').style.display = 'inline-block';
+    renderBlogPosts(); renderHomePosts();
+  }
+
+  function logoutAdmin() {
+    if (!confirm('Log out of admin mode?')) return;
+    isAdmin = false;
+    document.body.classList.remove('admin-mode');
+    document.getElementById('write-card').classList.remove('admin-visible');
+    document.getElementById('admin-badge').style.display = 'none';
+    renderBlogPosts(); renderHomePosts();
+  }
+
+  document.getElementById('admin-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeAdminModal();
+  });
+
+  // ── NAVIGATION ───────────────────────────────────────────────────────
   function showPage(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
@@ -734,39 +825,59 @@
     window.scrollTo(0, 0);
   }
 
-  // --- BLOG LOGIC ---
-  function publishPost() {
-    const title = document.getElementById('post-title').value.trim();
+  // ── PUBLISH ──────────────────────────────────────────────────────────
+  async function publishPost() {
+    if (!isAdmin) return;
+    const title    = document.getElementById('post-title').value.trim();
     const category = document.getElementById('post-category').value;
-    const content = document.getElementById('post-content').value.trim();
+    const content  = document.getElementById('post-content').value.trim();
+    const imageUrl = document.getElementById('post-image-url').value.trim();
     if (!title || !content) { alert('Please add a title and some content.'); return; }
+
+    const btn = document.getElementById('publish-btn');
+    btn.disabled = true; btn.textContent = 'Publishing...';
 
     const now = new Date();
     const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
-    const post = { id: Date.now(), title, category, date: dateStr, content };
+    const post = { id: Date.now(), title, category, date: dateStr, content, image: imageUrl || null };
     posts.unshift(post);
-    savePosts();
+    await savePosts();
 
     document.getElementById('post-title').value = '';
     document.getElementById('post-content').value = '';
+    document.getElementById('post-image-url').value = '';
+    document.getElementById('img-url-preview').style.display = 'none';
+    document.getElementById('img-url-preview-img').src = '';
+    document.getElementById('img-error').style.display = 'none';
 
-    renderBlogPosts();
-    renderSidebar();
-    renderHomePosts();
+    btn.disabled = false; btn.textContent = 'Publish Post';
+    renderBlogPosts(); renderSidebar(); renderHomePosts();
+    document.getElementById('posts-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  async function deletePost(id, e) {
+    e.stopPropagation();
+    if (!isAdmin) return;
+    if (!confirm('Delete this post? This cannot be undone.')) return;
+    posts = posts.filter(p => p.id !== id);
+    await savePosts();
+    renderBlogPosts(); renderSidebar(); renderHomePosts();
+  }
+
+  // ── RENDER ───────────────────────────────────────────────────────────
   function renderBlogPosts(filterCategory = null) {
     const container = document.getElementById('blog-posts-container');
-    const filtered = filterCategory ? posts.filter(p => p.category === filterCategory) : posts;
+    const filtered  = filterCategory ? posts.filter(p => p.category === filterCategory) : posts;
 
     if (filtered.length === 0) {
-      container.innerHTML = '<div class="empty-state"><p>No posts yet. Write your first one above!</p></div>';
+      container.innerHTML = '<div class="empty-state"><p>No posts yet.</p></div>';
       return;
     }
 
     container.innerHTML = filtered.map(post => `
       <div class="post-item" onclick="openPost(${post.id})">
+        ${isAdmin ? `<button class="delete-post-btn" onclick="deletePost(${post.id}, event)">Delete</button>` : ''}
+        ${post.image ? `<img class="post-thumb" src="${post.image}" alt="${post.title}" onerror="this.style.display='none'">` : ''}
         <div class="post-meta">
           <span class="post-date">${post.date}</span>
           <span class="post-category">${post.category}</span>
@@ -774,56 +885,65 @@
         <h3>${post.title}</h3>
         <p>${post.content.substring(0, 160)}${post.content.length > 160 ? '…' : ''}</p>
         <span class="post-read-more">Read more →</span>
+        ${shareButtonsHTML(post.id)}
       </div>
     `).join('');
   }
 
   function renderSidebar() {
+    const allCategories = ['Markets & Business','Observations','Learning & Growth','Travel & Experiences','Short Reflections','Books & Ideas'];
     const counts = {};
     posts.forEach(p => { counts[p.category] = (counts[p.category] || 0) + 1; });
-    const container = document.getElementById('sidebar-categories');
-    container.innerHTML = Object.entries(counts).map(([cat, count]) => `
-      <div class="sidebar-category" onclick="filterPosts('${cat}')">
-        <span>${cat}</span>
-        <span class="sidebar-count">${count}</span>
+    const container  = document.getElementById('sidebar-categories');
+    const activeCats = allCategories.filter(c => counts[c]);
+
+    if (activeCats.length === 0) {
+      container.innerHTML = '<p style="font-size:0.8rem;color:var(--muted);font-style:italic;">No posts yet.</p>';
+      return;
+    }
+
+    container.innerHTML = activeCats.map(cat => `
+      <div class="sidebar-category" onclick="filterPosts('${cat.replace(/'/g, "\\'")}')">
+        <span>${cat}</span><span class="sidebar-count">${counts[cat]}</span>
       </div>
     `).join('');
-    if (Object.keys(counts).length > 0) {
-      container.innerHTML += `<div class="sidebar-category" onclick="filterPosts(null)"><span>All Posts</span><span class="sidebar-count">${posts.length}</span></div>`;
-    }
+    container.innerHTML += `<div class="sidebar-category" onclick="filterPosts(null)"><span>All Posts</span><span class="sidebar-count">${posts.length}</span></div>`;
   }
 
-  function filterPosts(category) {
-    renderBlogPosts(category);
-    closePost();
-  }
+  function filterPosts(category) { renderBlogPosts(category); closePost(); }
 
   function openPost(id) {
     const post = posts.find(p => p.id === id);
     if (!post) return;
-    document.getElementById('detail-title').textContent = post.title;
-    document.getElementById('detail-date').textContent = post.date;
+    currentOpenPostId = id;
+    document.getElementById('detail-title').textContent    = post.title;
+    document.getElementById('detail-date').textContent     = post.date;
     document.getElementById('detail-category').textContent = post.category;
-    document.getElementById('detail-body').textContent = post.content;
+    document.getElementById('detail-body').textContent     = post.content;
+    const detailImg = document.getElementById('detail-img');
+    if (post.image) { detailImg.src = post.image; detailImg.style.display = 'block'; detailImg.onerror = () => { detailImg.style.display = 'none'; }; }
+    else { detailImg.style.display = 'none'; }
     document.getElementById('post-detail').classList.add('show');
     document.getElementById('posts-list').classList.add('hide');
     window.scrollTo(0, 0);
   }
 
   function closePost() {
+    currentOpenPostId = null;
     document.getElementById('post-detail').classList.remove('show');
     document.getElementById('posts-list').classList.remove('hide');
   }
 
   function renderHomePosts() {
     const container = document.getElementById('home-recent-posts');
-    const recent = posts.slice(0, 2);
+    const recent    = posts.slice(0, 2);
     if (recent.length === 0) {
-      container.innerHTML = '<p style="color: var(--muted); font-size: 0.9rem;">No posts yet — head to the blog to write your first.</p>';
+      container.innerHTML = '<p style="color: var(--muted); font-size: 0.9rem;">No posts yet — check back soon.</p>';
       return;
     }
     container.innerHTML = recent.map(post => `
       <div class="post-item" onclick="showPage('blog'); setTimeout(() => openPost(${post.id}), 50)">
+        ${post.image ? `<img class="post-thumb" src="${post.image}" alt="${post.title}" onerror="this.style.display='none'">` : ''}
         <div class="post-meta">
           <span class="post-date">${post.date}</span>
           <span class="post-category">${post.category}</span>
@@ -835,8 +955,14 @@
     `).join('');
   }
 
-  // Init
-  renderHomePosts();
+  // ── INIT ─────────────────────────────────────────────────────────────
+  (async function init() {
+    showLoading(true);
+    await loadPosts();
+    showLoading(false);
+    renderHomePosts();
+    renderSidebar();
+  })();
 </script>
 </body>
 </html>
